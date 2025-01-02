@@ -6,11 +6,10 @@ from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from gym_chrome_dino.utils.wrappers import make_dino
 import tensorflow as tf
 from time import sleep
-from src.config import HAND_GESTURES
+from game.dino.configs.config import HAND_GESTURES
 
 
 def is_in_triangle(point, triangle):
-    # barycentric coordinate system
     x, y = point
     (xa, ya), (xb, yb), (xc, yc) = triangle
     a = ((yb - yc)*(x - xc) + (xc - xb)*(y - yc)) / ((yb - yc)*(xa - xc) + (xc - xb)*(ya - yc))

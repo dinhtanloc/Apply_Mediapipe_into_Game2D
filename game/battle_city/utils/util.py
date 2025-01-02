@@ -6,11 +6,21 @@ from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from gym_chrome_dino.utils.wrappers import make_dino
 import tensorflow as tf
 from time import sleep
-from src.config import HAND_GESTURES
+from game.battle_city.configs.config import HAND_GESTURES
+from game.battle_city.configs.config import *
+import os, pygame, time, random, uuid, sys
+import numpy as np
+
+players = []
+enemies = []
+bullets = []
+bonuses = []
+labels = []
+play_sounds = True
+sounds = {}
 
 
 def is_in_triangle(point, triangle):
-    # barycentric coordinate system
     x, y = point
     (xa, ya), (xb, yb), (xc, yc) = triangle
     a = ((yb - yc)*(x - xc) + (xc - xb)*(y - yc)) / ((yb - yc)*(xa - xc) + (xc - xb)*(ya - yc))
@@ -88,23 +98,15 @@ def dinosaur(v,lock):
         _, _, done, _ = env.step(u)
 
 
-import os, pygame, time, random, uuid, sys
-import numpy as np
-from src.config import *
 
-sprites = pygame.transform.scale(pygame.image.load("resources/images/sprites.gif"), [192, 224])
+
+sprites = pygame.transform.scale(pygame.image.load(f"{assets_dir}/images/sprites.gif"), [192, 224])
 if IS_FULLSCREEN:
     screen = pygame.display.set_mode(((WIDTH, HEIGHT)), pygame.FULLSCREEN)
 else:
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-players = []
-enemies = []
-bullets = []
-bonuses = []
-labels = []
-play_sounds = True
-sounds = {}
+
 
 
 class myRect(pygame.Rect):
@@ -469,10 +471,7 @@ class Explosion():
 
 
 class Level():
-    # tile constants
-    (TILE_EMPTY, TILE_BRICK, TILE_STEEL, TILE_WATER, TILE_GRASS, TILE_FROZE) = range(6)
-
-    # tile width/height in px
+    [TILE_EMPTY, TILE_BRICK, TILE_STEEL, TILE_WATER, TILE_GRASS, TILE_FROZE] = range(6)
     TILE_SIZE = 16
 
     def __init__(self, level_nr=None):
@@ -557,7 +556,7 @@ class Level():
         """ Load specified level
         @return boolean Whether level was loaded
         """
-        filename = "resources/levels/" + str(level_nr)
+        filename = "f{assets_dir}/levels/" + str(level_nr)
         if (not os.path.isfile(filename)):
             return False
         level = []
@@ -588,7 +587,7 @@ class Level():
         global screen
 
         if tiles == None:
-            tiles = [TILE_BRICK, TILE_STEEL, TILE_WATER, TILE_GRASS, TILE_FROZE]
+            tiles = [self.TILE_BRICK, self.TILE_STEEL, self.TILE_WATER, self.TILE_GRASS, self.TILE_FROZE]
 
         for tile in self.mapr:
             if tile.type in tiles:
@@ -1378,15 +1377,15 @@ class Game():
         if play_sounds:
             pygame.mixer.init(44100, -16, 1, 512)
 
-            sounds["start"] = pygame.mixer.Sound("resources/sounds/gamestart.ogg")
-            sounds["end"] = pygame.mixer.Sound("resources/sounds/gameover.ogg")
-            sounds["score"] = pygame.mixer.Sound("resources/sounds/score.ogg")
-            sounds["bg"] = pygame.mixer.Sound("resources/sounds/background.ogg")
-            sounds["fire"] = pygame.mixer.Sound("resources/sounds/fire.ogg")
-            sounds["bonus"] = pygame.mixer.Sound("resources/sounds/bonus.ogg")
-            sounds["explosion"] = pygame.mixer.Sound("resources/sounds/explosion.ogg")
-            sounds["brick"] = pygame.mixer.Sound("resources/sounds/brick.ogg")
-            sounds["steel"] = pygame.mixer.Sound("resources/sounds/steel.ogg")
+            sounds["start"] = pygame.mixer.Sound(f"{assets_dir}/sounds/gamestart.ogg")
+            sounds["end"] = pygame.mixer.Sound(f"{assets_dir}/sounds/gameover.ogg")
+            sounds["score"] = pygame.mixer.Sound(f"{assets_dir}/sounds/score.ogg")
+            sounds["bg"] = pygame.mixer.Sound(f"{assets_dir}/sounds/background.ogg")
+            sounds["fire"] = pygame.mixer.Sound(f"{assets_dir}/sounds/fire.ogg")
+            sounds["bonus"] = pygame.mixer.Sound(f"{assets_dir}/sounds/bonus.ogg")
+            sounds["explosion"] = pygame.mixer.Sound(f"{assets_dir}/sounds/explosion.ogg")
+            sounds["brick"] = pygame.mixer.Sound(f"{assets_dir}/sounds/brick.ogg")
+            sounds["steel"] = pygame.mixer.Sound(f"{assets_dir}/sounds/steel.ogg")
 
         self.enemy_life_image = sprites.subsurface(81 * 2, 57 * 2, 7 * 2, 7 * 2)
         self.player_life_image = sprites.subsurface(89 * 2, 56 * 2, 7 * 2, 8 * 2)
@@ -1399,7 +1398,7 @@ class Game():
         self.timefreeze = False
 
         # load custom font
-        self.font = pygame.font.Font("resources/fonts/prstart.ttf", 16)
+        self.font = pygame.font.Font(f"{assets_dir}/fonts/prstart.ttf", 16)
 
         # pre-render game over text
         self.im_game_over = pygame.Surface((64, 40))

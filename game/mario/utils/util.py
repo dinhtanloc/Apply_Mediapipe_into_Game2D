@@ -6,7 +6,7 @@ from gym_super_mario_bros.actions import COMPLEX_MOVEMENT
 from gym_chrome_dino.utils.wrappers import make_dino
 import tensorflow as tf
 from time import sleep
-from src.config import HAND_GESTURES
+from game.mario.configs.config import *
 
 
 def is_in_triangle(point, triangle):

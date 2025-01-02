@@ -2,7 +2,7 @@ import tensorflow as tf
 import cv2
 import multiprocessing as _mp
 from utils.util import load_graph, dinosaur, detect_hands, predict
-from configs.config import RED, GREEN, YELLOW
+from src.configs.config import RED, GREEN, YELLOW
 
 tf.flags.DEFINE_integer("width", 640, "Screen width")
 tf.flags.DEFINE_integer("height", 480, "Screen height")
